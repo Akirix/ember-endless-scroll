@@ -3,9 +3,9 @@ const computed = Ember.computed;
 const observer = Ember.observer;
 
 export default Ember.Mixin.create( {
-    current_page: 1,
+    current_page: null,
     page: 1,
-    per_page: 20,
+    per_page: 5,
     queryParams: [ 'page', 'per_page' ],
     loadingRecords: false,
 
@@ -16,13 +16,28 @@ export default Ember.Mixin.create( {
     actions: {
         next: function( modelName, params ){
             var _this = this;
+            var currentPage = _this.get( 'current_page' );
+            var page = _this.get( 'page' );
+            var perPage = _this.get( 'per_page' );
+            var model = _this.get( 'model' );
+
             if( this.get( 'hasMorePages' ) ){
-                var currentPage = _this.incrementProperty( 'current_page' );
-                var model = this.get( 'model' );
+                if( currentPage === null ){
+                    _this.set( 'current_page', page + 1 );
+                    currentPage = _this.get( 'current_page' );
+                }
+                else{
+                    currentPage = _this.incrementProperty( 'current_page' );
+                }
+
+                var updateParams = {
+                    page: currentPage,
+                    per_page: perPage
+                };
+                params = Ember.merge( updateParams, params );
 
                 _this.set( 'loadingRecords', true );
-
-                this.store.find( modelName, params )
+                _this.store.find( modelName, params )
                     .then( function( result ){
                         var resultModel = [];
                         resultModel.pushObjects( model.toArray() );
