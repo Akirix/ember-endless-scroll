@@ -5,7 +5,7 @@ const observer = Ember.observer;
 export default Ember.Mixin.create( {
     current_page: null,
     page: 1,
-    per_page: 5,
+    per_page: 20,
     queryParams: [ 'page', 'per_page' ],
     loadingRecords: false,
 
