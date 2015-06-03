@@ -14,7 +14,7 @@ export default Ember.Mixin.create( {
     } ),
 
     actions: {
-        next: function( model, params ){
+        next: function( modelName, params ){
             var _this = this;
             if( this.get( 'hasMorePages' ) ){
                 var currentPage = _this.incrementProperty( 'current_page' );
@@ -22,7 +22,7 @@ export default Ember.Mixin.create( {
 
                 _this.set( 'loadingRecords', true );
 
-                this.store.find( model, params )
+                this.store.find( modelName, params )
                     .then( function( result ){
                         var resultModel = [];
                         resultModel.pushObjects( model.toArray() );
