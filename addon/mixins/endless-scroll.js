@@ -3,7 +3,7 @@ const computed = Ember.computed;
 const observer = Ember.observer;
 
 export default Ember.Mixin.create( {
-    current_page: null,
+    current_page: 1,
     page: 1,
     per_page: 20,
     queryParams: [ 'page', 'per_page' ],
