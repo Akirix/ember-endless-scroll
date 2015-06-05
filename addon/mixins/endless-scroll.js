@@ -10,7 +10,8 @@ export default Ember.Mixin.create( {
     loadingRecords: false,
 
     hasMorePages: computed( 'total_pages', 'current_page', function(){
-        return this.get( 'current_page' ) < this.get( 'total_pages' );
+        var totalPages = this.get( 'total_pages' );
+        return !Ember.isEmpty( totalPages ) && this.get( 'current_page' ) < totalPages;
     } ),
 
     actions: {
