@@ -11,7 +11,7 @@ export default Ember.Mixin.create( {
 
     hasMorePages: computed( 'total_pages', 'current_page', function(){
         var totalPages = this.get( 'total_pages' );
-        return !Ember.isEmpty( totalPages ) && this.get( 'current_page' ) < totalPages;
+        return typeof totalPages === 'number' && this.get( 'current_page' ) < totalPages;
     } ),
 
     actions: {
