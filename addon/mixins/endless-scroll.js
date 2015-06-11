@@ -3,51 +3,46 @@ const computed = Ember.computed;
 const observer = Ember.observer;
 
 export default Ember.Mixin.create( {
-    current_page: 1,
-    page: 1,
-    per_page: 20,
-    queryParams: [ 'page', 'per_page' ],
-    loadingRecords: false,
+    beforeModel: function( transition ){
+        this._super.apply( this, arguments );
 
-    hasMorePages: computed( 'total_pages', 'current_page', function(){
-        var totalPages = this.get( 'total_pages' );
-        return typeof totalPages === 'number' && this.get( 'current_page' ) < totalPages;
-    } ),
+        var page = parseInt( transition.queryParams.page );
+        if( Ember.typeOf( transition.intent.url ) === 'string' && !isNaN( page ) && page !== 1 ){
+            transition.abort();
+            this.transitionTo( transition.intent.url.replace( /page=[0-9]*/g, "page=1" ) );
+        }
+    },
+
+    setupController: function( controller, model ){
+        this._super.apply( this, arguments );
+
+        if( Ember.typeOf( model.meta ) === 'object' && Ember.typeOf( model.meta.total_pages ) ){
+            controller.set( 'total_pages', model.meta.total_pages );
+
+            controller.set( 'hasMorePages', computed( 'total_pages', 'page', function(){
+                var totalPages = controller.get( 'total_pages' );
+                return typeof totalPages === 'number' && controller.get( 'page' ) < totalPages;
+            } ) );
+        }
+    },
 
     actions: {
-        next: function( modelName, params ){
+        next: function(){
             var _this = this;
-            var currentPage = _this.get( 'current_page' );
-            var page = _this.get( 'page' );
-            var perPage = _this.get( 'per_page' );
-            var model = _this.get( 'model' );
+            var currentPath = this.controllerFor( 'application' ).get( 'currentPath' );
+            var currentController = this.controllerFor( currentPath );
+            var page = this.get( 'page' );
+            var previousModel = currentController.get( 'model' );
+            var resultModel = [];
 
-            if( this.get( 'hasMorePages' ) ){
-                if( currentPage === null ){
-                    _this.set( 'current_page', page + 1 );
-                    currentPage = _this.get( 'current_page' );
-                }
-                else{
-                    currentPage = _this.incrementProperty( 'current_page' );
-                }
+            if( currentController.get( 'hasMorePages' ) ){
+                page = currentController.incrementProperty( 'page' );
 
-                var updateParams = {
-                    page: currentPage,
-                    per_page: perPage
-                };
-                params = Ember.merge( updateParams, params );
-
-                _this.set( 'loadingRecords', true );
-                _this.store.find( modelName, params )
-                    .then( function( result ){
-                        var resultModel = [];
-                        resultModel.pushObjects( model.toArray() );
-                        resultModel.pushObjects( result.toArray() );
-                        _this.set( 'model', resultModel );
-                    } )
-                    .finally( function(){
-                        _this.set( 'loadingRecords', false );
-                    } );
+                _this.refresh().promise.then( function( result ){
+                    resultModel.pushObjects( previousModel.toArray() );
+                    resultModel.pushObjects( result.context.toArray() );
+                    currentController.set( 'model', resultModel );
+                } );
             }
         }
     }
