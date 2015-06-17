@@ -32,7 +32,7 @@ export default Ember.Mixin.create( {
 
                 _this.refresh().promise.then( function( result ){
                     resultModel.pushObjects( previousModel.toArray() );
-                    resultModel.pushObjects( result.context.toArray() );
+                    resultModel.pushObjects( currentController.get( 'model' ).toArray() );
                     currentController.set( 'model', resultModel );
                 } );
             }
