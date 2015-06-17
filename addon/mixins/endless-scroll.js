@@ -16,6 +16,8 @@ export default Ember.Mixin.create( {
     setupController: function( controller, model ){
         this._super.apply( this, arguments );
 
+        this.set( 'currentController', controller );
+
         if( Ember.typeOf( model.meta ) === 'object' && Ember.typeOf( model.meta.total_pages ) ){
             controller.set( 'total_pages', model.meta.total_pages );
 
@@ -29,8 +31,7 @@ export default Ember.Mixin.create( {
     actions: {
         next: function(){
             var _this = this;
-            var currentPath = this.controllerFor( 'application' ).get( 'currentPath' );
-            var currentController = this.controllerFor( currentPath );
+            var currentController = this.get( 'currentController' );
             var page = this.get( 'page' );
             var previousModel = currentController.get( 'model' );
             var resultModel = [];
