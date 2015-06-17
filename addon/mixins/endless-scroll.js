@@ -3,16 +3,6 @@ const computed = Ember.computed;
 const observer = Ember.observer;
 
 export default Ember.Mixin.create( {
-    beforeModel: function( transition ){
-        this._super.apply( this, arguments );
-
-        var page = parseInt( transition.queryParams.page );
-        if( Ember.typeOf( transition.intent.url ) === 'string' && !isNaN( page ) && page !== 1 ){
-            transition.abort();
-            this.transitionTo( transition.intent.url.replace( /page=[0-9]*/g, "page=1" ) );
-        }
-    },
-
     setupController: function( controller, model ){
         this._super.apply( this, arguments );
 
@@ -23,7 +13,8 @@ export default Ember.Mixin.create( {
 
             controller.set( 'hasMorePages', computed( 'total_pages', 'page', function(){
                 var totalPages = controller.get( 'total_pages' );
-                return typeof totalPages === 'number' && controller.get( 'page' ) < totalPages;
+                var page = controller.get( 'page' );
+                return Ember.typeOf( totalPages ) === 'number' && Ember.typeOf( page ) === 'number' && page < totalPages;
             } ) );
         }
     },
