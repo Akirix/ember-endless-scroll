@@ -10,12 +10,7 @@ export default Ember.Mixin.create( {
 
         if( Ember.typeOf( model.meta ) === 'object' && Ember.typeOf( model.meta.total_pages ) ){
             controller.set( 'total_pages', model.meta.total_pages );
-
-            controller.set( 'hasMorePages', computed( 'total_pages', 'page', function(){
-                var totalPages = controller.get( 'total_pages' );
-                var page = controller.get( 'page' );
-                return Ember.typeOf( totalPages ) === 'number' && Ember.typeOf( page ) === 'number' && page < totalPages;
-            } ) );
+            controller.set( 'hasMorePages', Ember.typeOf( controller.get( 'total_pages' ) ) === 'number' && Ember.typeOf( controller.get( 'page' ) ) === 'number' && controller.get( 'page' ) < controller.get( 'total_pages' ) );
         }
     },
 
