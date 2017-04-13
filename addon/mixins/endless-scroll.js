@@ -14,6 +14,14 @@ export default Ember.Mixin.create( {
         }
     },
 
+    resetController: function( controller, isExiting ){
+        this._super.apply( this, arguments );
+
+        if( isExiting ){
+            controller.set( 'page', 1 )
+        }
+    },
+
     actions: {
         next: function(){
             var _this = this;
