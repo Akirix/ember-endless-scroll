@@ -9,7 +9,8 @@
   "scripts": {
     "start": "ember server",
     "build": "ember build",
-    "test": "ember try:testall"
+    "test": "ember try:testall",
+    "install": "bower --allow-root install"
   },
   "repository": "git@github.com:Akirix/ember-endless-scroll.git",
   "engines": {
@@ -32,7 +33,8 @@
     "ember-disable-proxy-controllers": "^1.0.0",
     "ember-export-application-global": "^1.0.2",
     "ember-disable-prototype-extensions": "^1.0.0",
-    "ember-try": "0.0.6"
+    "ember-try": "0.0.6",
+    "bower": "1.8.4"
   },
   "keywords": [
     "ember-addon"

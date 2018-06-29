@@ -12,3 +12,7 @@ dist/
 bower.json
 Brocfile.js
 testem.json
+
+.settings
+.project
+.tern-project

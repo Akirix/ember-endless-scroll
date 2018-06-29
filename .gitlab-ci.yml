@@ -1,0 +1,36 @@
+image: node:4.8.7
+
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - node_modules/
+
+stages:
+  - install
+  - build
+  - test
+  - deploy
+  
+before_script:
+  - npm set registry http://${NPM_REGISTRY}
+  - echo "//${NPM_REGISTRY}/:_authToken='${NPM_TOKEN}'" >> .npmrc
+
+npm_install:
+  stage: deploy
+  only:
+    - tags
+  script:
+    - export NEW_VERSION=$(git describe --abbrev=0 --tags)
+    - export OLD_VERSION=$(node -p "require('./package.json').version")
+    - 'export OLD_VALUE="\"version\": \"${OLD_VERSION}\""'
+    - 'export NEW_VALUE="\"version\": \"${NEW_VERSION}\""'
+    - 'sed -i -e "s#$OLD_VALUE#$NEW_VALUE#" package.json'
+#    - git add package.json
+#    - git push origin HEAD:ci-build
+    - npm install --only=production --unsafe-perm
+    - npm publish
+  environment:
+    name: staging
+    url: 'http://10.20.60.6:4873/#/detail/ember-endless-scroll'
+   
