@@ -1,6 +1,6 @@
 {
   "name": "ember-endless-scroll",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple addon for adding paginated model information",
   "directories": {
     "doc": "doc",
